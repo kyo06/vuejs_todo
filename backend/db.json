@@ -1,0 +1,17 @@
+{
+    "todos": [
+        { "id": "1", "text": "Tâche 1", "completed": true },
+        { "id": "2", "text": "Tâche 2", "completed": true },
+        { "id": "3", "text": "Tâche 3", "completed": true },
+        { "id": "4", "text": "Tâche 4", "completed": false },
+        { "id": "5", "text": "Tâche 5", "completed": false },
+        { "id": "6", "text": "Tâche 6", "completed": true }
+    ],
+    "musics": [
+        { "id": "1", "name": "Musique 1" },
+        { "id": "2", "name": "Musique 2" },
+        { "id": "3", "name": "Musique 3" },
+        { "id": "4", "name": "Musique 4" },
+        { "id": "5", "name": "Musique 5" }
+    ]
+}
