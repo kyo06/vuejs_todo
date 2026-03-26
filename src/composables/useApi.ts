@@ -54,7 +54,7 @@ export function useApi<TResponse = any, TBody = any>() {
         get,
         post,
         put,
-        delete: del //mot réservé
+        del //car delete mot réservé
     }
 }
 
