@@ -1,13 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import AddTodoView from '@/views/AddTodoView.vue'
 import HeaderView from '@/views/HeaderView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '',
       name: 'home',
       component: HomeView, // Routerview -> default
       /* 
@@ -17,8 +16,24 @@ const router = createRouter({
       */
     },
     {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue'),
+    },
+    {
       path: '/testheader',
       name: 'testheader',
+      //CustomGuard fon only this route
+      beforeEnter: (to, from, next) => {
+        const isLogged = localStorage.getItem('isLogged');
+
+        if(!isLogged) {
+          next("/login"); //redirection
+        } else {
+          next(); //autorisé
+        }
+
+      },
       components: {
         default: HomeView, // Routerview -> default
         header: HeaderView // Routerview -> header
@@ -34,7 +49,36 @@ const router = createRouter({
       path: '/edit/:id',
       name: 'edit',
       component: () => import('../views/AddTodoView.vue'), // Routerview -> default // Lazy
-    },    
+      beforeEnter: (to, from, next) => {
+        const id = Number(to.params.id);
+
+        if(isNaN(id)) {
+          console.log('redirection car id invalide')
+          next("/"); //redirection car id invalide
+        } else {
+          next(); //autorisé
+        }
+
+      },
+    },
+    {
+      path: "/dashboard",
+      name: 'dashboard',
+      component: () => import('../views/DashboardLayout.vue'),
+      children: [
+        {
+          path: "",
+          name: 'dashboard-home',
+          component: () => import('../views/DashboardHomeView.vue'),
+        },
+        {
+          path: "create", // /dashboard/create
+          name: 'dashboard-create',
+          component: () => import('../views/DashboardCreateView.vue'),
+        },
+      ]
+        
+    },
     {
       path: '/about',
       name: 'about', 
@@ -51,5 +95,19 @@ const router = createRouter({
     }
   ],
 })
+
+
+//Guard Global
+router.beforeEach((to, from, next) => {
+  const isLogged = localStorage.getItem('isLogged');
+
+  if(!isLogged) {
+    next("/login"); //redirection
+  } else {
+    next(); //autorisé
+  }
+});
+
+
 
 export default router
