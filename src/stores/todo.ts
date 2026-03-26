@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { TodoListValidator, type Todo, type TodoList } from '@/types/Todo';
+import { TodoListValidator, TodoValidator, type Todo, type TodoList } from '@/types/Todo';
 import { useApi } from '@/composables/useApi';
 
 const URL_TODO_API = 'http://localhost:3000/todos'
@@ -33,6 +33,23 @@ export const useTodoStore = defineStore('todo.store', () => {
         }
     }
 
+    // async function createTodo(newTodo: Omit<Todo, "id">) {
+    async function createTodo(newTodo: Pick<Todo, "text" | "completed">) {
+        loading.value = true;
+        error.value = null;
+        try {
+            // TodoValidator.parse(newTodo);
+            const { post } = useApi<TodoList>();
+            await post(URL_TODO_API, newTodo);         
+        } catch(err) {
+            error.value = 'Error lors de la création du todo : ' + err;
+        } finally {
+            loading.value = false;
+        }
+    }
+
+
+
     async function deleteTodo(id: string) {
         loading.value = true;
         error.value = null;
@@ -53,6 +70,7 @@ export const useTodoStore = defineStore('todo.store', () => {
         error,
         countActiveTodos,
         fetchTodos,
+        createTodo,
         deleteTodo,
     }
 

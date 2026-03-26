@@ -6,6 +6,9 @@ import HelloWorld from '@components/HelloWorld.vue'
 </script>
 
 <template>
+
+  <RouterView name="header" /> <!-- header -->
+
   <header>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
@@ -14,12 +17,14 @@ import HelloWorld from '@components/HelloWorld.vue'
 
       <nav>
         <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/testheader">Tester Header</RouterLink>
+        <RouterLink to="/add">Ajouter un Todo</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
     </div>
   </header>
 
-  <RouterView />
+  <RouterView /> <!-- default -->
 </template>
 
 <style scoped>
