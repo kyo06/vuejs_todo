@@ -27,7 +27,8 @@ const router = createRouter({
     {
       path: '/add',
       name: 'add',
-      component: AddTodoView, // Routerview -> default
+      // component: AddTodoView, // Routerview -> default // Eager
+      component: () => import('../views/AddTodoView.vue'), // Routerview -> default // Lazy
     },    
     {
       path: '/about',
@@ -37,6 +38,12 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'), // Routerview -> default
     },
+    {
+      // TOUJOURS LE METTRE A LA FIN CAR AUTRE ROUTE EVALUEE EN DERNIER
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('../views/NotFoundView.vue'),
+    }
   ],
 })
 
