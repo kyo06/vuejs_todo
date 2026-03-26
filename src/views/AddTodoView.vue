@@ -1,25 +1,33 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useRouter } from 'vue-router'
-
-import { useTodoStore } from '@/stores/todo';
-import type { Todo } from '@/types/Todo';
+import { useTodoStore } from '@/stores/todo'
 import router from '@/router';
+import { useRoute } from 'vue-router';
 
-const newTodo = ref<Todo>({
-    id: '-1',
-    text: '',
-    completed: false
-})
+const route = useRoute();
+
+//Le pathVariable id de edit
+const id = route.params.id as string;
 
 const store = useTodoStore();
 // Utiliser storeToRefs pour rendre les states en ref
 // Même s'ils ont été déclaré ref dans la store
-const { loading, error } = storeToRefs(store);
+const { todo: newTodo, loading, error } = storeToRefs(store);
 
-async function addTodo() {
-    await store.createTodo(newTodo.value);
+onMounted(() => {
+    if (id) {
+        store.fetchOne(id);
+    }
+});
+
+async function addOrEditTodo() {
+    if (!id) {
+        //Ajout
+        await store.createTodo({ text: newTodo.value.text, completed: false });
+    } else {
+        await store.modifyTodo(id, newTodo.value);
+    }
     newTodo.value.text = '';
     router.push('/');
 }
@@ -27,14 +35,16 @@ async function addTodo() {
 </script>
 
 <template>
-    <h1>Ajouter une tâche</h1>
+    <h1 v-if="!id">Ajouter une tâche</h1>
+    <h1 v-if="id">Modifier la tâche</h1>
 
-    <form @submit.prevent="addTodo">
-        <input v-model="newTodo.text" type="text" placeholder="Ajouter une tâche..." required />
+    <form @submit.prevent="addOrEditTodo">
+        <input v-model="newTodo.text" type="text" placeholder="Remplir" required />
         <button type="submit" :disabled="loading">
-            {{ loading ? 'Ajout...' : 'Ajouter' }}
+            {{ loading ? 'En cours...' : !id ? 'Ajouter' : 'Modifier' }}
         </button>
     </form>
+    <div v-if="error">{{ error }}</div>
 
 </template>
 

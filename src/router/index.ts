@@ -29,6 +29,11 @@ const router = createRouter({
       name: 'add',
       // component: AddTodoView, // Routerview -> default // Eager
       component: () => import('../views/AddTodoView.vue'), // Routerview -> default // Lazy
+    },
+    {
+      path: '/edit/:id',
+      name: 'edit',
+      component: () => import('../views/AddTodoView.vue'), // Routerview -> default // Lazy
     },    
     {
       path: '/about',

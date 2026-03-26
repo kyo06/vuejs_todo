@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Todo } from '@/types/Todo';
-
+import router from '@/router';
 
 const props = defineProps<{
     todo: Todo
@@ -14,11 +14,22 @@ function emitDelete() {
     emit('delete', props.todo.id);
 }
 
+function redirectToEdit() {
+    //router.push(`/edit/${props.todo.id}`);
+    router.push({
+        name: 'edit',
+        params: { id: props.todo.id }
+    });
+}
+
 </script>
 
 <template>
     <li :class="{ completed: todo.completed }">
         <span>{{ todo.text }}</span>
+        <button @click.stop="redirectToEdit">
+            ✎
+        </button>
         <button @click.stop="emitDelete">
             ❌
         </button>

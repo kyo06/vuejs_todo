@@ -9,6 +9,11 @@ const URL_TODO_API = 'http://localhost:3000/todos'
 export const useTodoStore = defineStore('todo.store', () => {
     //States
     const todos = ref<TodoList>([]);
+    const todo = ref<Todo>({
+        id: "-1",
+        text: '',
+        completed: false
+    });
     const loading = ref(false);
     const error = ref<string | null>(null);
 
@@ -33,6 +38,20 @@ export const useTodoStore = defineStore('todo.store', () => {
         }
     }
 
+    async function fetchOne(id: string) {
+        loading.value = true;
+        error.value = null;
+        try {
+            const { data, get } = useApi<Todo>();
+            await get(`${URL_TODO_API}/${id}`)
+            todo.value = data.value as Todo;
+        } catch(err) {
+            error.value = `Error lors du chargement du todo id -> ${id} : ` + err;
+        } finally {
+            loading.value = false;
+        }
+    }
+
     // async function createTodo(newTodo: Omit<Todo, "id">) {
     async function createTodo(newTodo: Pick<Todo, "text" | "completed">) {
         loading.value = true;
@@ -48,7 +67,19 @@ export const useTodoStore = defineStore('todo.store', () => {
         }
     }
 
-
+    async function modifyTodo(id: string, newTodo: Todo) {
+        loading.value = true;
+        error.value = null;
+        try {
+            // TodoValidator.parse(newTodo);
+            const { put } = useApi<TodoList>();
+            await put(`${URL_TODO_API}/${id}`, newTodo);         
+        } catch(err) {
+            error.value = 'Error lors de la modification du todo : ' + err;
+        } finally {
+            loading.value = false;
+        }
+    }
 
     async function deleteTodo(id: string) {
         loading.value = true;
@@ -66,11 +97,14 @@ export const useTodoStore = defineStore('todo.store', () => {
 
     return {
         todos,
+        todo,
         loading,
         error,
         countActiveTodos,
         fetchTodos,
+        fetchOne,
         createTodo,
+        modifyTodo,
         deleteTodo,
     }
 
