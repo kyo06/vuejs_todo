@@ -24,7 +24,7 @@ export const useTodoStore = defineStore('todo.store', () => {
         try {
             const { data, get } = useApi<TodoList>();
             await get(URL_TODO_API)
-            TodoListValidator.parse(data)
+            TodoListValidator.parse(data.value);
             todos.value = data.value as TodoList || [];
         } catch(err) {
             error.value = 'Error lors du chargement des todos : ' + err;

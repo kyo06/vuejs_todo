@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 import TodoItemComponent from './TodoItemComponent.vue';
 import { useTodoStore } from '@/stores/todo';
 
-const { todos, loading, error, fetchTodos, deleteTodo } = useTodoStore();
+const store = useTodoStore();
+// Utiliser storeToRefs pour rendre les states en ref
+// Même s'ils ont été déclaré ref dans la store
+const { todos, loading, error } = storeToRefs(store);
 
-onMounted(async () => {
-    await fetchTodos();
+onMounted(() => {
+    store.fetchTodos();
 });
 
 async function deleteTodoFromEvent(id: string) {
-    await deleteTodo(id);
+    await store.deleteTodo(id);
 }
 
 </script>
@@ -21,13 +25,11 @@ async function deleteTodoFromEvent(id: string) {
         <p v-if="loading">
             En cours de chargement...
         </p>
-        <p v-else>
-        <ul>
+        <ul v-if="!loading">
             <TodoItemComponent v-for="todo in todos" :key="todo.id" :todo="todo" @delete="deleteTodoFromEvent" />
         </ul>
-        </p>
         <p v-if="error">
-            Erreur trouvé lors du chargement des données {{ error }}
+            {{ error }}
         </p>
     </main>
 </template>
